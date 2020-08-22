@@ -3,11 +3,7 @@
 
 name: Python application
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -34,4 +30,4 @@ jobs:
         black . -l 120 --check
     - name: Test with pytest
       run: |
-        pipenv run python -m pytest
+        pipenv run python -m pytest --cov=. --cov-fail-under=85
