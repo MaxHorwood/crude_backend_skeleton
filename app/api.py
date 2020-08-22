@@ -2,8 +2,10 @@ from http import HTTPStatus
 from typing import Dict
 
 from .data_types import User, Address
-from .server_responses import bad_request_error, server_error
+from .server_responses import bad_request_error, make_response
 
+
+# TODO: Move this to a database
 USERS = [
     User(0, "User 1", "User@user.com", Address("1 Something Road", "OX11 1ES")),
     User(1, "User 2", "User2@user.com", Address("2 Something Road", "OX11 1ES")),
@@ -36,7 +38,7 @@ def get_users():
 def get_user(id: int):
     user = find_user(id)
     if not user:
-        return {"message": f"User with id `{id}` not found"}, 404
+        return make_response(f"User with id `{id}` not found", HTTPStatus.NOT_FOUND)
     return user.to_dict(), HTTPStatus.OK
 
 
@@ -50,5 +52,5 @@ def create_user(user_data: Dict):
 
 def delete_user(id: int):
     if remove_user(id):
-        return {"message": f"Deleted user `{id}`"}, HTTPStatus.OK
-    return {"message": f"Failed to deleted user `{id}`"}, HTTPStatus.BAD_REQUES
+        return make_response(f"Deleted user `{id}`", HTTPStatus.OK)
+    return make_response(f"Failed to deleted user `{id}`", HTTPStatus.BAD_REQUEST)

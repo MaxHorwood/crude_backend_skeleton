@@ -1,11 +1,8 @@
 import os
 import yaml
-import pathlib
 import connexion
 
-from typing import List, Any
 from http import HTTPStatus
-from connexion.resolver import RestyResolver
 from dataclasses_jsonschema import SchemaType
 
 from .data_types import BaseType
