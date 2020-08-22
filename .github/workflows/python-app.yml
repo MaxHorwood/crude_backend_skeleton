@@ -30,4 +30,4 @@ jobs:
         black . -l 120 --check
     - name: Test with pytest
       run: |
-        pipenv run python -m pytest --cov --cov-fail-under=85
+        pipenv run python -m pytest --cov=. --cov-fail-under=85
