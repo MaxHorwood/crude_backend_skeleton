@@ -34,5 +34,5 @@ jobs:
         black . -l 120 --check
     - name: Test with pytest
       run: |
-        echo "::set-env name=PYTHONPATH::."
-        pipenv pytest
+        echo "::set-env name=PYTHONPATH::home/runner/work/crude_backend_skeleton::."
+        pipenv run pytest
