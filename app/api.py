@@ -1,56 +1,46 @@
 from http import HTTPStatus
 from typing import Dict
 
-from .data_types import User, Address
+import app.data_types as dt
 from .server_responses import bad_request_error, make_response
+from app.models import db, User, Address
 
 
-# TODO: Move this to a database
-USERS = [
-    User(0, "User 1", "User@user.com", Address("1 Something Road", "OX11 1ES")),
-    User(1, "User 2", "User2@user.com", Address("2 Something Road", "OX11 1ES")),
-]
-
-
-def find_user(id: int) -> User:
-    for user in USERS:
-        if user.id == id:
-            return user
-    return None
-
-
-def add_user(user: User):
-    USERS.append(user)
-
-
-def remove_user(user_id: int):
-    for user in USERS:
-        if user.id == user_id:
-            USERS.remove(user)
-            return True
-    return False
+def add_user(user: dt.User) -> User:
+    user_model = User(name=user.name, email=user.email)
+    db.session.add(user_model)
+    db.session.flush()
+    for address in user.addresses:
+        address_model = Address(postcode=address.postcode, address=address.address, user_id=user_model.id)
+        db.session.add(address_model)
+    db.session.commit()
+    return user_model
 
 
 def get_users():
-    return [user.to_dict() for user in USERS], HTTPStatus.OK
+    users = db.session.query(User).all()
+    return [dt.User.from_object(user) for user in users], HTTPStatus.OK
 
 
 def get_user(id: int):
-    user = find_user(id)
+    user = db.session.query(User).filter(User.id == id).one_or_none()
     if not user:
         return make_response(f"User with id `{id}` not found", HTTPStatus.NOT_FOUND)
-    return user.to_dict(), HTTPStatus.OK
+    return dt.User.from_object(user), HTTPStatus.OK
 
 
 def create_user(user_data: Dict):
-    user = User.from_dict(user_data)
+    user = dt.User.from_dict(user_data)
     if not user:
         return bad_request_error(f"Error adding user: {user_data}")
-    add_user(user)
-    return user.to_dict(), HTTPStatus.CREATED
+    user_model = add_user(user)
+    return dt.User.from_object(user_model), HTTPStatus.CREATED
 
 
 def delete_user(id: int):
-    if remove_user(id):
+    user = db.session.query(User).filter(User.id == id).one_or_none()
+    if user:
+        db.session.delete(user)
+        db.session.commit()
         return make_response(f"Deleted user `{id}`", HTTPStatus.OK)
     return make_response(f"Failed to deleted user `{id}`", HTTPStatus.BAD_REQUEST)

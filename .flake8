@@ -1,0 +1,5 @@
+[flake8]
+exclude = migrations/env.py
+max-complexity = 10
+ignore = E226,E302,E41
+max-line-length = 160

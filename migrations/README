@@ -1,0 +1,15 @@
+For initial set-up:
+```bash
+> flask db init
+```
+
+Run the migrations on the database:
+```bash
+> flask db upgrade
+```
+
+To create a new migration:
+Make sure database is up-to-date.
+```bash
+> flask db migrate
+```
