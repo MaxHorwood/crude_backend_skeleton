@@ -2,11 +2,12 @@ import os
 import yaml
 import connexion
 
-from http import HTTPStatus
 from dataclasses_jsonschema import SchemaType
+from flask_migrate import Migrate
 
 from .data_types import BaseType
-
+from .config import configurations
+from .models import db
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,9 +19,21 @@ def load_api_spec(spec_file: str):
     return spec
 
 
-def create_app():
+migrate = Migrate()
+
+
+def create_app(testing: False):
     app = connexion.FlaskApp(__name__, specification_dir="./", options={"swagger_ui": True})
     app.add_api(load_api_spec("my_api.yaml"))
-    app.add_error_handler(HTTPStatus.BAD_REQUEST, lambda x: {"message": f"Bad Request {x}"})
 
-    return app.app
+    flask_app = app.app
+    if testing:
+        config_str = "testing"
+    else:
+        config_str = "development"
+    flask_app.config.from_object(configurations[config_str])
+
+    db.init_app(flask_app)
+    migrate.init_app(flask_app, db)
+
+    return flask_app

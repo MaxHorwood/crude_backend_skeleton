@@ -10,6 +10,8 @@ dataclasses-jsonschema = "*"
 connexion = {extras = [ "swagger-ui",],version = "*"}
 flask-sqlalchemy = "*"
 alembic = "*"
+psycopg2 = "*"
+flask-migrate = "*"
 
 [dev-packages]
 pytest = "*"

@@ -1,11 +1,14 @@
 import pytest
-from app import create_app
+from app import create_app, db
 
 
 @pytest.fixture
 def client():
-    app = create_app()
+    app = create_app(True)
     app.testing = True
+
+    with app.app_context():
+        db.create_all()
 
     with app.test_client() as client:
         yield client

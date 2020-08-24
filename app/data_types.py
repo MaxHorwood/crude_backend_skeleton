@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from dataclasses_jsonschema import JsonSchemaMixin
+from typing import List, Optional
 
 
 @dataclass
@@ -15,7 +16,7 @@ class Address(BaseType):
 
 @dataclass
 class User(BaseType):
-    id: int
     name: str
     email: str
-    address: Address
+    addresses: List[Address]
+    id: Optional[int] = None
