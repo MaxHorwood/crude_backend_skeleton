@@ -22,15 +22,15 @@ def load_api_spec(spec_file: str):
 migrate = Migrate()
 
 
-def create_app(testing: False):
+def create_app(testing: bool = False):
     app = connexion.FlaskApp(__name__, specification_dir="./", options={"swagger_ui": True})
     app.add_api(load_api_spec("my_api.yaml"))
 
     flask_app = app.app
     if testing:
-        config_str = "testing"
+        config_str = "test"
     else:
-        config_str = "development"
+        config_str = "dev"
     flask_app.config.from_object(configurations[config_str])
 
     db.init_app(flask_app)
