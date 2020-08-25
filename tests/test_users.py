@@ -20,6 +20,24 @@ def test_create_user(client):
     assert user["addresses"] == DUMMY_USER["addresses"]
 
 
+def test_create_user_validation_fail(client):
+    DUMMY_USER["email"] = "m"
+    res = client.post("/users", json=DUMMY_USER)
+    assert res.status_code == HTTPStatus.BAD_REQUEST
+
+    DUMMY_USER["email"] = "max@max.com"
+    res = client.post("/users", json=DUMMY_USER)
+    assert res.status_code == HTTPStatus.CREATED
+
+    DUMMY_USER["addresses"][0]["postcode"] = "123"
+    res = client.post("/users", json=DUMMY_USER)
+    assert res.status_code == HTTPStatus.BAD_REQUEST
+
+    DUMMY_USER["addresses"][0]["postcode"] = "XX1 1XX"
+    res = client.post("/users", json=DUMMY_USER)
+    assert res.status_code == HTTPStatus.CREATED
+
+
 def test_get_user(client):
     res = client.post("/users", json=DUMMY_USER)
     assert res.status_code == HTTPStatus.CREATED

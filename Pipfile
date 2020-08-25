@@ -16,7 +16,6 @@ flask-migrate = "*"
 [dev-packages]
 pytest = "*"
 flake8 = "*"
-pytest-sugar = "*"
 pytest-cov = "*"
 
 [requires]
