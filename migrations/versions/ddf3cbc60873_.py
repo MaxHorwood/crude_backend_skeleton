@@ -31,7 +31,10 @@ def upgrade():
         sa.Column("postcode", sa.String(length=80), nullable=False),
         sa.Column("address", sa.String(length=100), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=True),
-        sa.ForeignKeyConstraint(["user_id"], ["user.id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["user.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
