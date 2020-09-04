@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: github-crude-backend
+  name: nginx-1
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-crude-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: github-crude-backend
+    spec:
+      containers:
+        - image: >-
+            gcr.io/magnetic-planet-283314/github.com/maxhorwood/crude_backend_skeleton
+          imagePullPolicy: IfNotPresent
+          name: crude-backend-skeleton-1
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: github-crude-backend
+  name: nginx-1-hpa-ctih
+  namespace: default
+spec:
+  maxReplicas: 5
+  metrics:
+    - resource:
+        name: cpu
+        targetAverageUtilization: 80
+      type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: github-crude-backend
+  name: github-svc-crude-backend
+  namespace: default
+spec:
+  clusterIP: 10.99.10.184
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 30470
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    app: github-crude-backend
+  sessionAffinity: None
+  type: LoadBalancer
