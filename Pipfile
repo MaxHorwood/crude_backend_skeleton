@@ -17,6 +17,7 @@ flask-migrate = "*"
 pytest = "*"
 flake8 = "*"
 pytest-cov = "*"
+black = "==20.8b1"
 
 [requires]
 python_version = "3.8"

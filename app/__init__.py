@@ -31,7 +31,8 @@ def create_app(testing: bool = False):
         config_str = "test"
     else:
         config_str = "dev"
-    flask_app.config.from_object(configurations[config_str])
+    conf = configurations[config_str]()
+    flask_app.config.from_object(conf)
 
     db.init_app(flask_app)
     migrate.init_app(flask_app, db)
